@@ -1,24 +1,29 @@
 <template>
   <div class="gallery__view">
     <search-row @searchReqEntered="searchReqUpdate"></search-row>
-    <ul class="gallery__list">
-      <img-card
-        v-for="(img, i) in imgs"
-        :key="img.id + i"
-        :img_options="img"
-      ></img-card>
-    </ul>
+    <gallery-stack
+      :column-min-width="300"
+      :gutter-width="10"
+      :gutter-height="10"
+      monitor-images-loaded
+      @images-loaded="imageLoaded"
+    >
+      <img-card v-masonry-tile v-for="(img, i) in imgs" :key="img.id + i">
+        <img :src="img.images.downsized.url" :alt="img.title" />
+      </img-card>
+    </gallery-stack>
     <load-trigger @scrollInBottom="loadImgs"></load-trigger>
   </div>
 </template>
 
 <script>
 import LoadTrigger from "@/components/LoadTrigger";
+import GalleryStack from "./GalleryStack";
 import ImgCard from "@/components/ImgCard";
 import SearchRow from "@/components/SearchRow";
 
 export default {
-  components: { LoadTrigger, ImgCard, SearchRow },
+  components: { LoadTrigger, GalleryStack, ImgCard, SearchRow },
   comments: LoadTrigger,
   name: "GalleryView",
   data: () => {
@@ -26,10 +31,14 @@ export default {
       searchReq: "",
       offset: 0,
       limit: 10,
-      imgs: []
+      imgs: [],
     };
   },
   methods: {
+    imageLoaded(image) {
+      // console.log(image.img);
+      image.img.classList.add("loaded");
+    },
     async loadImgs() {
       //What API URL needs?
       const APIUrl = `https://api.giphy.com/v1/gifs/${
@@ -39,7 +48,7 @@ export default {
       const searchParams = new URLSearchParams({
         offset: this.offset,
         limit: this.limit,
-        api_key: "HTcOek7tnrQkqHXqQWmQWp6fxt1N1jDU"
+        api_key: "HTcOek7tnrQkqHXqQWmQWp6fxt1N1jDU",
       });
       if (this.searchReq) {
         searchParams.append("q", this.searchReq);
@@ -63,15 +72,14 @@ export default {
     clearLay() {
       this.imgs = [];
       this.offset = 0;
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style lang="scss" scoped>
-.gallery__list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+.gallery__view {
+  min-height: calc(100vh - 1px);
+  margin-top: 100px;
 }
 </style>

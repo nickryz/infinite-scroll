@@ -12,7 +12,10 @@
     "node-sass": "^4.14.1",
     "sass": "^1.26.11",
     "sass-loader": "^10.0.2",
-    "vue": "^2.6.11"
+    "vue": "^2.6.11",
+    "vue-images-loaded": "^1.1.2",
+    "vue-masonry": "^0.11.8",
+    "vue-stack-grid": "^1.2.1"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",
