@@ -111,7 +111,7 @@ export default {
       this.$el.style.height = containerHeight + "px";
     },
     imagesLoaded(instance, image) {
-      this.$emit("images-loaded", image);
+      this.$emit("images-loaded", image, instance);
       if (this.monitorImagesLoaded) this.reflow();
     },
   },

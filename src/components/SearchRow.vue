@@ -9,6 +9,7 @@
         placeholder="Click to enter"
       />
     </form>
+    <slot></slot>
   </div>
 </template>
 
@@ -30,7 +31,8 @@ export default {
   },
   methods: {
     searchReqEntered() {
-      this.$emit("searchReqEntered", this.searchReq);
+      const reqForEmit = (this.searchReq.length >= 3) ? this.searchReq : "";
+      this.$emit("searchReqEntered", reqForEmit);
     },
     delay(callback, delay) {
       let timeout;
@@ -71,11 +73,11 @@ export default {
 
   label {
     padding-right: 1em;
-    font-size: 1.5rem;
+    font-size: 1.2rem;
   }
   input {
     border: 1px solid gray;
-    padding: 0.3em 0.5em;
+    padding: 0.2em 0.3em;
     border-radius: 2px;
     font-size: 1.2rem;
   }

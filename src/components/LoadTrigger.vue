@@ -27,9 +27,5 @@ export default {
 <style scoped>
 .load-trigger {
   height: 1px;
-  width: 1px;
-  position: absolute;
-  bottom: 0;
-  left: 0;
 }
 </style>

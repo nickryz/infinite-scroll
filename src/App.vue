@@ -26,7 +26,7 @@ html {
 body {
   margin: 0;
   width: 100%;
-  background: #ebebeb;
+  /*background: #ebebeb;*/
   font-family: Arial, sans-serif;
 }
 </style>
