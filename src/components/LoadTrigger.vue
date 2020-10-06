@@ -13,8 +13,13 @@ export default {
   mounted() {
     const callback = function (entries) {
       entries.forEach((entry) => {
-        if (entry && entry.isIntersecting) {
-          this.$emit("scrollInBottom");
+        console.log(this.$store.state.gallery);
+        if (
+          entry &&
+          entry.isIntersecting &&
+          this.$store.state.gallery.loadTriggerIsActive
+        ) {
+          this.$store.dispatch("gallery/loadImgs");
         }
       });
     };
@@ -27,5 +32,7 @@ export default {
 <style scoped>
 .load-trigger {
   height: 1px;
+  background: #cb2025;
+  /*margin-top: auto;*/
 }
 </style>

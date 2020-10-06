@@ -7,7 +7,7 @@
     </search-row>
 
     <gallery-stack
-      v-if="$store.state.gallery.imgs.length > 0"
+      class="gallery-stack__custom"
       ref="galleryStack"
       :column-min-width="300"
       :gutter-width="3"
@@ -19,9 +19,7 @@
         <img :src="img.images.downsized.url" :alt="img.title" />
       </img-card>
     </gallery-stack>
-    <load-trigger
-      @scrollInBottom="$store.dispatch('gallery/loadImgs')"
-    ></load-trigger>
+    <load-trigger></load-trigger>
     <transition name="fade">
       <loading-bar
         class="load-status"
@@ -33,7 +31,7 @@
 
 <script>
 import LoadTrigger from "@/components/LoadTrigger";
-import GalleryStack from "./GalleryStack";
+import GalleryStack from "@/components/GalleryStack";
 import ImgCard from "@/components/ImgCard";
 import SearchRow from "@/components/SearchRow";
 import LoadingBar from "@/components/LoadingBar";
@@ -44,16 +42,14 @@ export default {
   name: "GalleryView",
   data: () => {
     return {
-      searchReq: "",
-      offset: 0,
-      limit: 10,
-      imgs: [],
-      isLoading: false,
       status: {
         isShown: true,
-        message: ""
-      }
+        message: "",
+      },
     };
+  },
+  mounted() {
+    this.$store.dispatch("gallery/loadImgs");
   },
   methods: {
     imageLoaded(image, instance) {
@@ -70,8 +66,8 @@ export default {
       this.searchReq = searchReq;
       // this.loadImgs();
       // this.clearLay();
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -82,9 +78,10 @@ export default {
   margin: 0.5em 0 0;
 }
 .gallery__view {
-  margin-top: 100px;
   max-width: 1920px;
-  margin: 100px auto;
+  margin: 100px auto 0;
+  display: flex;
+  flex-direction: column;
 }
 .load-status {
   position: fixed;

@@ -16,7 +16,7 @@
     "vue-images-loaded": "^1.1.2",
     "vue-masonry": "^0.11.8",
     "vue-stack-grid": "^1.2.1",
-    "vuex": "^3.4.0"
+    "vuex": "^3.5.1"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",
