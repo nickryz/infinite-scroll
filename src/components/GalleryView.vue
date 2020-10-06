@@ -1,11 +1,13 @@
 <template>
   <div class="gallery__view">
     <search-row @searchReqEntered="searchReqUpdate">
-      <p class="status-bar" v-if="status.isShown">{{ status.message || "Scroll down and never stop!!!"}}</p>
+      <p class="status-bar" v-if="status.isShown">
+        {{ status.message || "Scroll down and never stop!!!" }}
+      </p>
     </search-row>
 
     <gallery-stack
-      v-if="imgs.length > 0"
+      v-if="$store.state.gallery.imgs.length > 0"
       ref="galleryStack"
       :column-min-width="300"
       :gutter-width="3"
@@ -13,13 +15,18 @@
       monitor-images-loaded
       @images-loaded="imageLoaded"
     >
-      <img-card v-masonry-tile v-for="(img, i) in imgs" :key="img.id + i">
+      <img-card v-for="(img, i) in $store.state.gallery.imgs" :key="img.id + i">
         <img :src="img.images.downsized.url" :alt="img.title" />
       </img-card>
     </gallery-stack>
-    <load-trigger @scrollInBottom="loadImgs"></load-trigger>
+    <load-trigger
+      @scrollInBottom="$store.dispatch('gallery/loadImgs')"
+    ></load-trigger>
     <transition name="fade">
-      <loading-bar class="load-status" v-show="isLoading"></loading-bar>
+      <loading-bar
+        class="load-status"
+        v-show="$store.state.gallery.isLoading"
+      ></loading-bar>
     </transition>
   </div>
 </template>
@@ -32,7 +39,7 @@ import SearchRow from "@/components/SearchRow";
 import LoadingBar from "@/components/LoadingBar";
 
 export default {
-  components: {LoadingBar, LoadTrigger, GalleryStack, ImgCard, SearchRow },
+  components: { LoadingBar, LoadTrigger, GalleryStack, ImgCard, SearchRow },
   comments: LoadTrigger,
   name: "GalleryView",
   data: () => {
@@ -46,62 +53,25 @@ export default {
         isShown: true,
         message: ""
       }
-
     };
   },
   methods: {
     imageLoaded(image, instance) {
       image.img.classList.add("loaded");
-      if(instance.isComplete) {
-        this.status.message = "";
-        this.isLoading = false;
-        if(this.$refs.galleryStack.$el.clientHeight <= window.innerHeight) this.loadImgs();
+      if (instance.isComplete) {
+        // this.status.message = "";
+        this.$store.commit("gallery/changeLoadingStatus", false);
+        if (this.$refs.galleryStack.$el.clientHeight <= window.innerHeight)
+          this.$store.dispatch("gallery/loadImgs");
       }
-    },
-    async loadImgs() {
-      //What API URL needs?
-      const APIUrl = `https://api.giphy.com/v1/gifs/${
-        this.searchReq ? "search" : "trending"
-      }`;
-      //What API search params needs?
-      const searchParams = new URLSearchParams({
-        offset: this.offset,
-        limit: this.limit,
-        api_key: "HTcOek7tnrQkqHXqQWmQWp6fxt1N1jDU",
-      });
-      if (this.searchReq) {
-        searchParams.append("q", this.searchReq);
-      }
-      //Create finally request
-      try {
-        this.isLoading = true;
-        const response = await fetch(`${APIUrl}?${searchParams.toString()}`);
-        const imgList = await response.json();
-        this.offset += this.limit;
-        this.imgs = [...this.imgs, ...imgList.data];
-        if(this.imgs.length > 0) {
-          this.status.message = "Loading..."
-        } else {
-          this.status.message ="Oops...nothing was found";
-          this.isLoading = false;
-        }
-      } catch (err) {
-        this.status.message = "Oops...maybe it's a connection problem";
-        this.isLoading = false;
-      }
-
     },
     searchReqUpdate(searchReq) {
-      if(this.searchReq === searchReq) return;
+      // if (this.searchReq === searchReq) return;
       this.searchReq = searchReq;
-      this.loadImgs();
-      this.clearLay();
-    },
-    clearLay() {
-      this.imgs = [];
-      this.offset = 0;
-    },
-  },
+      // this.loadImgs();
+      // this.clearLay();
+    }
+  }
 };
 </script>
 

@@ -5,7 +5,8 @@
       <input
         id="search-input"
         type="text"
-        v-model.trim="searchReq"
+        :value="$store.state.gallery.searchReq"
+        @input="searchReqEntered"
         placeholder="Click to enter"
       />
     </form>
@@ -18,7 +19,7 @@ export default {
   name: "SearchRow",
   data: () => {
     return {
-      searchReq: "",
+      searchReq: ""
     };
   },
   created() {
@@ -27,22 +28,29 @@ export default {
   watch: {
     searchReq() {
       this.timeout();
-    },
+    }
   },
   methods: {
-    searchReqEntered() {
-      const reqForEmit = (this.searchReq.length >= 3) ? this.searchReq : "";
-      this.$emit("searchReqEntered", reqForEmit);
+    searchReqEntered(e) {
+      const value = e.target.value.trim();
+      if (
+        value.length < 3 &&
+        !this.$store.getters["gallery/getNormalizeSearchReq"]
+      )
+        return;
+      this.$store.dispatch("gallery/clearLay");
+      this.$store.dispatch("gallery/loadImgs");
+      this.$store.commit("gallery/updateSearchReq", value);
     },
     delay(callback, delay) {
       let timeout;
 
-      return function () {
+      return function() {
         if (timeout) clearTimeout(timeout);
         timeout = setTimeout(callback, delay);
       };
-    },
-  },
+    }
+  }
 };
 </script>
 
