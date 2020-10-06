@@ -1,86 +1,99 @@
 //state
 const state = () => ({
-  searchReq: "",
-  offset: 0,
-  limit: 10,
-  imgs: [],
-  loadTriggerIsActive: false,
-  isLoading: false,
+  API: {
+    key: "HTcOek7tnrQkqHXqQWmQWp6fxt1N1jDU",
+    links: {
+      base: "https://api.giphy.com/v1/gifs/",
+      trending: "trending",
+      search: "search"
+    },
+    offset: 0,
+    limit: 10,
+    min_search_symbols_qty: 3
+  },
+  SEARCH_REQ: "",
+  IMGS: [],
+  NEED_CLEAR_LAY: false,
+  LOADING: false
 });
 
 // getters
 const getters = {
-  getNormalizeSearchReq: (state) => {
-    return state.searchReq.length < 3 ? "" : state.searchReq;
+  NORMALIZED_SEARCH_REQ: state => {
+    return state.SEARCH_REQ.length < 3 ? "" : state.SEARCH_REQ;
   },
+  GET_SEARCH_REQ: state => {
+    return state.SEARCH_REQ;
+  }
 };
 // mutations
 const mutations = {
-  updateStateValue(state, arg) {
-    state[arg[0]] = arg[1];
+  LOADING(state, status) {
+    state.LOADING = status;
   },
-  updateSearchReq(state, searchReq) {
-    state.searchReq = searchReq;
+  NEED_CLEAR_LAY(state, status) {
+    state.NEED_CLEAR_LAY = status;
   },
-  updateImgList(state, imgList) {
-    state.imgs = imgList;
+  LOAD_TRIGGER_ACTIVE(state, status) {
+    state.LOAD_TRIGGER_ACTIVE = status;
   },
-  changeLoadingStatus(state, status) {
-    state.isLoading = status;
+  UPDATE_SEARCH_REQ(state, searchReq) {
+    state.SEARCH_REQ = searchReq;
   },
-  incrementOffset(state, value) {
+  UPDATE_IMG_LIST(state, imgList) {
+    state.IMGS = imgList;
+  },
+  INCREMENT_OFFSET(state, value) {
     if (value) {
-      state.offset = +value;
+      state.API.offset = +value;
     } else {
-      state.offset += state.limit;
+      state.API.offset += state.API.limit;
     }
-  },
+  }
 };
 
 // actions
 const actions = {
   /* loading img list from API*/
-  async loadImgs(context) {
-    context.commit("changeLoadingStatus", true);
-    console.log(context.state.offset);
+  async LOAD_IMGS(context) {
     //What API URL needs?
-    const APIUrl = `https://api.giphy.com/v1/gifs/${
-      context.getters.getNormalizeSearchReq ? "search" : "trending"
+    const APIUrl = `${context.state.API.links.base}${
+      context.getters.NORMALIZED_SEARCH_REQ
+        ? context.state.API.links.search
+        : context.state.API.links.trending
     }`;
     //What API search params needs?
     const searchParams = new URLSearchParams({
-      offset: context.state.offset,
-      limit: context.state.limit,
-      api_key: "HTcOek7tnrQkqHXqQWmQWp6fxt1N1jDU",
+      offset: context.state.API.offset,
+      limit: context.state.API.limit,
+      api_key: context.state.API.key
     });
-    if (context.getters.getNormalizeSearchReq) {
-      searchParams.append("q", context.state.searchReq);
+    if (context.getters.NORMALIZED_SEARCH_REQ) {
+      searchParams.append("q", context.state.SEARCH_REQ);
     }
     //Create finally request
     try {
+      context.commit("INCREMENT_OFFSET");
       const response = await fetch(`${APIUrl}?${searchParams.toString()}`);
       let imgList = await response.json();
-      context.commit("updateImgList", [...context.state.imgs, ...imgList.data]);
-      context.commit("incrementOffset");
-      if (state.imgs.length > 0) {
-        // this.status.message = "Loading..."
+      if (imgList.data.length > 0) {
+        context.commit("LOADING", true);
+        context.commit("UPDATE_IMG_LIST", [
+          ...context.state.IMGS,
+          ...imgList.data
+        ]);
       } else {
-        // this.status.message ="Oops...nothing was found";
-        // this.isLoading = false;
+        context.commit("LOAD_TRIGGER_ACTIVE", true);
       }
-      context.commit("updateStateValue", ["loadTriggerIsActive", true]);
-      context.commit("changeLoadingStatus", false);
     } catch (err) {
-      // this.status.message = "Oops...maybe it's a connection problem";
-      context.commit("updateStateValue", ["loadTriggerIsActive", true]);
-      context.commit("changeLoadingStatus", false);
+      context.commit("LOAD_TRIGGER_ACTIVE", true);
     }
   },
-  clearLay(context) {
-    context.commit("updateStateValue", ["loadTriggerIsActive", false]);
-    context.commit("updateImgList", []);
-    context.commit("incrementOffset", "0");
-  },
+  CLEAR_LAY(context) {
+    context.commit("LOAD_TRIGGER_ACTIVE", false);
+    context.commit("UPDATE_IMG_LIST", []);
+    context.commit("INCREMENT_OFFSET", "0");
+  }
 };
 
 export default {
@@ -88,5 +101,5 @@ export default {
   state,
   getters,
   actions,
-  mutations,
+  mutations
 };
