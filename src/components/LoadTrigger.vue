@@ -13,12 +13,12 @@ export default {
   mounted() {
     const callback = function (entries) {
       entries.forEach((entry) => {
-        console.log(this.$store.state.gallery);
         if (
           entry &&
           entry.isIntersecting &&
           this.$store.state.gallery.loadTriggerIsActive
         ) {
+          console.log(this.$store.state.gallery.loadTriggerIsActive);
           this.$store.dispatch("gallery/loadImgs");
         }
       });
