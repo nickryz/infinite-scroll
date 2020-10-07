@@ -5,26 +5,26 @@ const state = () => ({
     links: {
       base: "https://api.giphy.com/v1/gifs/",
       trending: "trending",
-      search: "search"
+      search: "search",
     },
     offset: 0,
     limit: 10,
-    min_search_symbols_qty: 3
+    min_search_symbols_qty: 3,
   },
   SEARCH_REQ: "",
   IMGS: [],
   NEED_CLEAR_LAY: false,
-  LOADING: false
+  LOADING: false,
 });
 
 // getters
 const getters = {
-  NORMALIZED_SEARCH_REQ: state => {
+  NORMALIZED_SEARCH_REQ: (state) => {
     return state.SEARCH_REQ.length < 3 ? "" : state.SEARCH_REQ;
   },
-  GET_SEARCH_REQ: state => {
+  GET_SEARCH_REQ: (state) => {
     return state.SEARCH_REQ;
-  }
+  },
 };
 // mutations
 const mutations = {
@@ -49,7 +49,7 @@ const mutations = {
     } else {
       state.API.offset += state.API.limit;
     }
-  }
+  },
 };
 
 // actions
@@ -66,7 +66,7 @@ const actions = {
     const searchParams = new URLSearchParams({
       offset: context.state.API.offset,
       limit: context.state.API.limit,
-      api_key: context.state.API.key
+      api_key: context.state.API.key,
     });
     if (context.getters.NORMALIZED_SEARCH_REQ) {
       searchParams.append("q", context.state.SEARCH_REQ);
@@ -80,7 +80,7 @@ const actions = {
         context.commit("LOADING", true);
         context.commit("UPDATE_IMG_LIST", [
           ...context.state.IMGS,
-          ...imgList.data
+          ...imgList.data,
         ]);
       } else {
         context.commit("LOAD_TRIGGER_ACTIVE", true);
@@ -93,7 +93,7 @@ const actions = {
     context.commit("LOAD_TRIGGER_ACTIVE", false);
     context.commit("UPDATE_IMG_LIST", []);
     context.commit("INCREMENT_OFFSET", "0");
-  }
+  },
 };
 
 export default {
@@ -101,5 +101,5 @@ export default {
   state,
   getters,
   actions,
-  mutations
+  mutations,
 };

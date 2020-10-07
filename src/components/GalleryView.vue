@@ -20,7 +20,13 @@
         </img-card>
       </gallery-stack>
 
-      <SorryMessage v-else key="sorry"></SorryMessage>
+      <SorryMessage
+        v-else-if="
+          !$store.state.gallery.IMGS.length &&
+          $store.state.gallery.SEARCH_REQ.length
+        "
+        key="sorry"
+      ></SorryMessage>
     </transition>
     <load-trigger></load-trigger>
     <transition name="fade">
@@ -47,7 +53,7 @@ export default {
     GalleryStack,
     ImgCard,
     SearchRow,
-    SorryMessage
+    SorryMessage,
   },
   comments: LoadTrigger,
   name: "GalleryView",
@@ -66,8 +72,8 @@ export default {
         if (this.$refs.galleryStack.$el.clientHeight <= window.innerHeight)
           this.$store.dispatch("gallery/LOAD_IMGS");
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
