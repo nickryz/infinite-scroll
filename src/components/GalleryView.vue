@@ -1,29 +1,32 @@
 <template>
   <div class="gallery__view">
-    <search-row @searchReqEntered="searchReqUpdate">
-      <p class="status-bar" v-if="status.isShown">
-        {{ status.message || "Scroll down and never stop!!!" }}
-      </p>
-    </search-row>
+    <search-row></search-row>
+    <transition name="fade" mode="out-in" key="stack">
+      <gallery-stack
+        v-if="$store.state.gallery.IMGS.length"
+        class="gallery-stack__custom"
+        ref="galleryStack"
+        :column-min-width="300"
+        :gutter-width="3"
+        :gutter-height="3"
+        monitor-images-loaded
+        @images-loaded="imageLoaded"
+      >
+        <img-card
+          v-for="(img, i) in $store.state.gallery.IMGS"
+          :key="img.id + i"
+        >
+          <img :src="img.images.downsized.url" :alt="img.title" />
+        </img-card>
+      </gallery-stack>
 
-    <gallery-stack
-      class="gallery-stack__custom"
-      ref="galleryStack"
-      :column-min-width="300"
-      :gutter-width="3"
-      :gutter-height="3"
-      monitor-images-loaded
-      @images-loaded="imageLoaded"
-    >
-      <img-card v-for="(img, i) in $store.state.gallery.imgs" :key="img.id + i">
-        <img :src="img.images.downsized.url" :alt="img.title" />
-      </img-card>
-    </gallery-stack>
+      <SorryMessage v-else key="sorry"></SorryMessage>
+    </transition>
     <load-trigger></load-trigger>
     <transition name="fade">
       <loading-bar
         class="load-status"
-        v-show="$store.state.gallery.isLoading"
+        v-show="$store.state.gallery.LOADING"
       ></loading-bar>
     </transition>
   </div>
@@ -35,39 +38,36 @@ import GalleryStack from "@/components/GalleryStack";
 import ImgCard from "@/components/ImgCard";
 import SearchRow from "@/components/SearchRow";
 import LoadingBar from "@/components/LoadingBar";
+import SorryMessage from "@/components/SorryMessage";
 
 export default {
-  components: { LoadingBar, LoadTrigger, GalleryStack, ImgCard, SearchRow },
+  components: {
+    LoadingBar,
+    LoadTrigger,
+    GalleryStack,
+    ImgCard,
+    SearchRow,
+    SorryMessage
+  },
   comments: LoadTrigger,
   name: "GalleryView",
   data: () => {
-    return {
-      status: {
-        isShown: true,
-        message: "",
-      },
-    };
+    return {};
   },
   mounted() {
-    this.$store.dispatch("gallery/loadImgs");
+    this.$store.dispatch("gallery/LOAD_IMGS");
   },
   methods: {
     imageLoaded(image, instance) {
       image.img.classList.add("loaded");
       if (instance.isComplete) {
-        // this.status.message = "";
-        this.$store.commit("gallery/changeLoadingStatus", false);
+        this.$store.commit("gallery/LOAD_TRIGGER_ACTIVE", true);
+        this.$store.commit("gallery/LOADING", false);
         if (this.$refs.galleryStack.$el.clientHeight <= window.innerHeight)
-          this.$store.dispatch("gallery/loadImgs");
+          this.$store.dispatch("gallery/LOAD_IMGS");
       }
-    },
-    searchReqUpdate(searchReq) {
-      // if (this.searchReq === searchReq) return;
-      this.searchReq = searchReq;
-      // this.loadImgs();
-      // this.clearLay();
-    },
-  },
+    }
+  }
 };
 </script>
 
@@ -90,10 +90,12 @@ export default {
   transform: translateX(-50%);
   pointer-events: none;
 }
-.fade-enter {
+.fade-enter,
+.fade-leave-to {
   opacity: 0;
 }
-.fade-enter-to {
-  transition: 2s opacity;
+.fade-enter-active,
+.fade-leave-active {
+  transition: 0.5s opacity;
 }
 </style>

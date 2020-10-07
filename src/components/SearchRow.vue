@@ -5,6 +5,7 @@
       <input
         id="search-input"
         type="text"
+        :value="$store.getters['gallery/GET_SEARCH_REQ']"
         @input="this.InputTimeout"
         placeholder="Click to enter"
       />
@@ -18,7 +19,7 @@ export default {
   name: "SearchRow",
   data: () => {
     return {
-      isNeedToUpdateImages: false,
+      isNeedToUpdateImages: false
     };
   },
   created() {
@@ -27,33 +28,37 @@ export default {
   methods: {
     searchReqEntered(e) {
       const value = e.target.value.trim();
-      this.$store.commit("gallery/updateSearchReq", value);
-      if (value.length >= 3) {
-        this.$store.dispatch("gallery/clearLay");
-        this.$store.dispatch("gallery/loadImgs");
+      this.$store.commit("gallery/UPDATE_SEARCH_REQ", value);
+      if (this.$store.getters["gallery/NORMALIZED_SEARCH_REQ"]) {
+        this.$store.dispatch("gallery/CLEAR_LAY");
+        this.$store.dispatch("gallery/LOAD_IMGS");
         this.isNeedToUpdateImages = true;
       } else if (this.isNeedToUpdateImages) {
-        this.$store.dispatch("gallery/clearLay");
-        this.$store.dispatch("gallery/loadImgs");
+        this.$store.dispatch("gallery/CLEAR_LAY");
+        this.$store.dispatch("gallery/LOAD_IMGS");
         this.isNeedToUpdateImages = false;
+      } else {
+        return;
       }
     },
     delay(callback, delay) {
       let timeout;
 
-      return function (e) {
+      return function(e) {
         if (timeout) clearTimeout(timeout);
         timeout = setTimeout(callback.bind(null, e), delay);
       };
-    },
-  },
+    }
+  }
 };
 </script>
 
 <style lang="scss" scoped>
 .search-row {
   position: fixed;
-  padding: 1em 1em;
+  padding: 1em 30px;
+  display: flex;
+  justify-content: flex-end;
   left: 0;
   top: 0;
   z-index: 10;
@@ -84,6 +89,21 @@ export default {
     padding: 0.2em 0.3em;
     border-radius: 2px;
     font-size: 1.2rem;
+    max-width: 100%;
+  }
+
+  @media (max-width: 480px) {
+    .search-row {
+      flex-direction: column;
+    }
+    label {
+      margin-bottom: 0.5em;
+      padding: 0;
+      width: 100%;
+    }
+    input {
+      width: 100%;
+    }
   }
 }
 </style>

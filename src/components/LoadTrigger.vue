@@ -16,10 +16,9 @@ export default {
         if (
           entry &&
           entry.isIntersecting &&
-          this.$store.state.gallery.loadTriggerIsActive
+          this.$store.state.gallery.LOAD_TRIGGER_ACTIVE
         ) {
-          console.log(this.$store.state.gallery.loadTriggerIsActive);
-          this.$store.dispatch("gallery/loadImgs");
+          this.$store.dispatch("gallery/LOAD_IMGS");
         }
       });
     };
@@ -32,7 +31,5 @@ export default {
 <style scoped>
 .load-trigger {
   height: 1px;
-  background: #cb2025;
-  /*margin-top: auto;*/
 }
 </style>
