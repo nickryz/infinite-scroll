@@ -1,15 +1,18 @@
 <template>
-  <div class="loader"></div>
+  <div class="loader-row">
+    <div class="loader"></div>
+  </div>
 </template>
 
 <script>
 export default {
-name: "LoadingBar"
-}
+  name: "LoadingBar",
+};
 </script>
 
 <style scoped>
-.loader  {
+.loader {
+  margin: 0 auto;
   animation: rotate 1s infinite;
   height: 50px;
   width: 50px;
@@ -18,7 +21,7 @@ name: "LoadingBar"
 .loader:before,
 .loader:after {
   border-radius: 50%;
-  content: '';
+  content: "";
   display: block;
   height: 20px;
   width: 20px;
@@ -57,7 +60,7 @@ name: "LoadingBar"
   50% {
     box-shadow: 0 0 0 #f8b334;
     margin-bottom: 0;
-    -webkit-transform: translate(15px,15px);
+    -webkit-transform: translate(15px, 15px);
     -moz-transform: translate(15px, 15px);
   }
   100% {
@@ -73,7 +76,7 @@ name: "LoadingBar"
   50% {
     box-shadow: 0 0 0 #97bf0d;
     margin-top: -20px;
-    -webkit-transform: translate(15px,15px);
+    -webkit-transform: translate(15px, 15px);
     -moz-transform: translate(15px, 15px);
   }
   100% {

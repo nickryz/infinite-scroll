@@ -10,8 +10,8 @@ import GalleryView from "./components/GalleryView.vue";
 export default {
   name: "App",
   components: {
-    GalleryView
-  }
+    GalleryView,
+  },
 };
 </script>
 
@@ -29,5 +29,6 @@ body {
   color: #666666;
   background: #ebebeb;
   font-family: Arial, sans-serif;
+  overflow-x: hidden;
 }
 </style>

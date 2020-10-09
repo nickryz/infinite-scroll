@@ -68,7 +68,7 @@ export default {
       image.img.classList.add("loaded");
       if (instance.isComplete) {
         this.$store.commit("gallery/LOAD_TRIGGER_ACTIVE", true);
-        this.$store.commit("gallery/LOADING", false);
+        // this.$store.commit("gallery/LOADING", false);
         if (this.$refs.galleryStack.$el.clientHeight <= window.innerHeight)
           this.$store.dispatch("gallery/LOAD_IMGS");
       }
@@ -91,9 +91,9 @@ export default {
 }
 .load-status {
   position: fixed;
-  left: 50%;
+  width: 100%;
+  left: 0;
   bottom: 0;
-  transform: translateX(-50%);
   pointer-events: none;
 }
 .fade-enter,
