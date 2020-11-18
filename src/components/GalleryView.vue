@@ -89,6 +89,9 @@ export default {
   display: flex;
   flex-direction: column;
 }
+.gallery-stack__custom {
+  overflow: hidden;
+}
 .load-status {
   position: fixed;
   width: 100%;
